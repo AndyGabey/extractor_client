@@ -4,6 +4,9 @@ import requests
 import simplejson
 import pandas as pd
 
+class GetDataError(Exception):
+    pass
+
 
 class ExtractorAPI(object):
     LOCAL_URL_HOST = 'http://127.0.0.1:5000'
@@ -68,13 +71,17 @@ class ExtractorAPI(object):
             elif data_format == 'html':
                 return resp.content
         except Exception as ex:
-            ret_e = Exception(resp)
+            ret_e = GetDataError(resp)
             self._errors.append(ret_e)
             raise ret_e
 
     def get_datasets(self):
         req_url = self.url_host + '/datasets.json'
         return self._get_json(req_url)['datasets']
+
+    def get_token(self):
+        req_url = self.url_host + '/user_token/{}.json'.format(self.token)
+        return self._get_json(req_url)['token']
 
     def get_dataset(self, name):
         req_url = self.url_host + '/dataset/' + name + '.json'

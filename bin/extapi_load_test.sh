@@ -3,7 +3,7 @@ cmd=load_extapi
 
 for i in $(eval echo {1..$1}); do {
   echo "Process \"$i\" started";
-  $cmd $2 $3 $4 & pid=$!
+  $cmd $2 $3 & pid=$!
   PID_LIST+=" $pid";
 } done
 
