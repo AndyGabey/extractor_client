@@ -1,2 +1,4 @@
 .*.swp
 *.pyc
+venv
+extractor_api.egg-info

@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+# PYTHON_ARGCOMPLETE_OK
+import sys
+from extractor_api import load
+exit(load.random_load(sys.argv))
