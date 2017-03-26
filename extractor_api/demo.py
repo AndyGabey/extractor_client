@@ -6,7 +6,30 @@ from extractor_api import ExtractorAPI
 
 
 if __name__ == '__main__':
-    extapi = ExtractorAPI(token='t4')
-    df = extapi.get_data('5min_Level1', dt.datetime(2015, 1, 1), dt.datetime(2015, 1, 1, 5), ['Tw'])
-    #plt.plot(df.values[:, 1])
-    #plt.show()
+    extapi = ExtractorAPI(token='tfull')
+
+    for dataset_name in ['5min_Level1', 'cloudbase_5min', 'cloudbase_1min']:
+        print(dataset_name)
+
+        plt.figure(dataset_name)
+        plt.clf()
+        plt.title(dataset_name)
+        vs = [v['var'] for v in extapi.get_dataset(dataset_name)['variables']]
+
+        df = extapi.get_data(dataset_name, dt.datetime(2015, 1, 1), dt.datetime(2015, 1, 3), vs)
+
+        for i in range(1, len(df.columns)):
+            try:
+                vals = []
+                xs = []
+                for j, val in enumerate(df.values[:, i]):
+                    try:
+                        vals.append(float(val))
+                        xs.append(j)
+                    except:
+                        pass
+                plt.plot(xs, vals, label=df.columns[i])
+            except:
+                print('Could not plot {}'.format(df.columns[i]))
+        plt.legend()
+    plt.show()
