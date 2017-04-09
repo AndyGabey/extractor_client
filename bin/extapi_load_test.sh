@@ -3,7 +3,8 @@ cmd=load_extapi
 
 for i in $(eval echo {1..$1}); do {
   echo "Process \"$i\" started";
-  $cmd $2 $3 & pid=$!
+  sleep 0.1
+  $cmd $2 $3 > log/$cmd-$i.out & pid=$!
   PID_LIST+=" $pid";
 } done
 

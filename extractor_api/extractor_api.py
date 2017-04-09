@@ -4,7 +4,16 @@ import requests
 import simplejson
 import pandas as pd
 
-class GetDataError(Exception):
+
+class UsageError(Exception):
+    pass
+
+
+class ServerError(Exception):
+    pass
+
+
+class ClientError(Exception):
     pass
 
 
@@ -47,12 +56,7 @@ class ExtractorAPI(object):
         else:
             token = ''
 
-        if data_format in ['json', 'pandas']:
-            req_data_format = 'json'
-        elif data_format == 'html':
-            req_data_format = 'html'
-        else:
-            raise Exception('Unknown data format {}'.format(data_format))
+        req_data_format = 'json'
 
         req_url = self.get_data_tpl.format(dataset=dataset,
                                            token=token,
@@ -60,20 +64,25 @@ class ExtractorAPI(object):
                                            end_date=end_date.strftime(self.DATE_FMT),
                                            variables=variable_str,
                                            data_format=req_data_format)
-        resp = self._get(req_url)
         try:
-            if data_format in ['json', 'pandas']:
+            try:
+                resp = self._get(req_url)
                 json = simplejson.loads(resp.content)
-                if data_format == 'json':
-                    return json
-                elif data_format == 'pandas':
-                    return pd.DataFrame(columns=json['header'], data=json['data'])
-            elif data_format == 'html':
-                return resp.content
+            except Exception as ex:
+                raise ClientError(ex)
+
+            if 'server_error' in json:
+                raise ServerError(json['server_error'])
+            elif 'usage_error' in json:
+                raise UsageError(json['usage_error'])
+
+            if data_format == 'json':
+                return json
+            elif data_format == 'pandas':
+                return pd.DataFrame(columns=json['header'], data=json['data'])
         except Exception as ex:
-            ret_e = GetDataError(resp)
-            self._errors.append(ret_e)
-            raise ret_e
+            self._errors.append(ex)
+            raise ex
 
     def get_datasets(self):
         req_url = self.url_host + '/datasets.json'
@@ -97,4 +106,3 @@ class ExtractorAPI(object):
         for dataset in datasets:
             all_data[dataset] = self.get_dataset(dataset)
         return all_data
-

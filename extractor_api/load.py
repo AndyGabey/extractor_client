@@ -1,19 +1,19 @@
 import random
 import datetime as dt
 
-from extractor_api import ExtractorAPI, GetDataError
+from extractor_api import ExtractorAPI
 
 
 def random_load(argv):
     "Picks a random dataset based on the token, ask for random selection of data"
     token_name = argv[1]
 
-    extapi = ExtractorAPI(token=token_name, chatty=False)
+    extapi = ExtractorAPI(token=token_name)
 
     # Pick a random dataset and get its info.
     # N.B. token's know which datasets they can be used for.
     token = extapi.get_token()
-    dataset_names = token['datasets']
+    dataset_names = [ds['name'] for ds in token['datasets']]
     dataset_name = random.choice(dataset_names)
     dataset = extapi.get_dataset(dataset_name)
     variables = dataset['variables']
@@ -42,12 +42,7 @@ def random_load(argv):
         # Fire off request.
         df = extapi.get_data(dataset_name, req_start_date, req_end_date, req_vars)
         print('{0: <20}: {1} - {2}: Extracted {3} rows'.format(dataset_name, req_start_date, req_end_date, len(df)))
-    except GetDataError as gde:
-        # Something went wrong!
-        for line in gde.message.content.split('\n'):
-            if 'error_message' in line:
-                break
-        print('{0: <20}: FAILED: {1}: {2}'.format(dataset_name, gde, line))
     except Exception as e:
-        # Something went badly wrong!
-        print('{0: <20}: FAILED: {1}'.format(dataset_name, e))
+        # Something went wrong!
+        print('{0: <20}: {1} - {2}: FAILED: {3}'.format(dataset_name, req_start_date, req_end_date, e))
+
