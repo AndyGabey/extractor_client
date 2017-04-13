@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import datetime as dt
 
 import pylab as plt
@@ -7,7 +8,7 @@ from extractor_api.extractor_api import ExtractorAPI
 
 
 if __name__ == '__main__':
-    extapi = ExtractorAPI(token='tfull')
+    extapi = ExtractorAPI(token=sys.argv[1])
 
     for dataset_name in ['5min_Level1', 'cloudbase_5min', 'cloudbase_1min']:
         print(dataset_name)
