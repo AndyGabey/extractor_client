@@ -1,4 +1,6 @@
 Extractor API
 =============
 
-    python demo.py
+    git clone https://github.com/markmuetz/extractor_api
+    pip install --user -e extractor_api
+    extractor_api <token>

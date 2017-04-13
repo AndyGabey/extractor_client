@@ -1,8 +1,9 @@
+#!/usr/bin/env python
 import datetime as dt
 
 import pylab as plt
 
-from extractor_api import ExtractorAPI
+from extractor_api.extractor_api import ExtractorAPI
 
 
 if __name__ == '__main__':

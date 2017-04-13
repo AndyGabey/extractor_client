@@ -3,3 +3,4 @@
 venv
 extractor_api.egg-info
 bin/log
+.idea

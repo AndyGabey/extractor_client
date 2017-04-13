@@ -12,5 +12,6 @@ setup(
     ],
     scripts=[
         'bin/load_extapi',
+        'bin/extractor_demo',
     ]
 )
